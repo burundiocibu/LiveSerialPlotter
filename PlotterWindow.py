@@ -102,7 +102,9 @@ class PlotterWindow:
         self.numinputsentrystr = StringVar(master, value="1")
 
         # Using OptionMenu instead:
-        self.plotmethodoptionmenu = OptionMenu(master, self.plotmethodentrystr, *plotmethods)
+        self.plotmethodoptionmenu = OptionMenu(
+            master, self.plotmethodentrystr, *plotmethods
+        )
         self.plotmethodoptionmenu.grid(row=4, column=2)
 
         self.npointsoptionmenu = OptionMenu(master, self.npointsentrystr, *npoints_list)
@@ -115,7 +117,9 @@ class PlotterWindow:
         self.portoptionmenu.width = 20
         self.portoptionmenu.grid(row=3, column=1, sticky="W")
 
-        self.numinputsoptionmenu = OptionMenu(master, self.numinputsentrystr, *input_num_options)
+        self.numinputsoptionmenu = OptionMenu(
+            master, self.numinputsentrystr, *input_num_options
+        )
         self.numinputsoptionmenu.grid(row=4, column=1, sticky="W")
 
         # Buttons
@@ -139,13 +143,21 @@ class PlotterWindow:
 
         self.printrawdata = IntVar(master, value=0)
         self.printrawbutton = Checkbutton(
-            master, text="Print raw data", variable=self.printrawdata, onvalue=1, offvalue=0
+            master,
+            text="Print raw data",
+            variable=self.printrawdata,
+            onvalue=1,
+            offvalue=0,
         )
         self.printrawbutton.grid(row=2, column=2)
 
         self.requirebrackets = IntVar(master, value=1)
         self.requirebracketsbutton = Checkbutton(
-            master, text="Require brackets", variable=self.requirebrackets, onvalue=1, offvalue=0
+            master,
+            text="Require brackets",
+            variable=self.requirebrackets,
+            onvalue=1,
+            offvalue=0,
         )
         self.requirebracketsbutton.grid(row=3, column=5)
 

@@ -30,7 +30,9 @@ def main():
         help="Maximum number of points to store (default: %(default)s)",
     )
     parser.add_argument(
-        "--max-inputs", default=5, help="Maximum number of vars to plot (default: %(default)s)"
+        "--max-inputs",
+        default=5,
+        help="Maximum number of vars to plot (default: %(default)s)",
     )
     parser.add_argument(
         "-n",
