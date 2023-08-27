@@ -54,7 +54,7 @@ class OScope:
         if tmax <= self.tmax or self.paused:
             plt.pause(0.001)
             return
-        
+
         self.tmax = tmax
         tmin = t[-1] - self.x_width
         plt.clf()
@@ -91,4 +91,4 @@ class OScope:
         self.b_quit.on_clicked(self.quit)
 
         self.imin = np.searchsorted(t, tmin)
-        plt.pause(0.001)
+        plt.pause(0.00001)
