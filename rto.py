@@ -3,21 +3,23 @@
 
 import argparse
 import logging
-import queue
+import matplotlib as mpl
+import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+import numpy as np
 import serial.tools.list_ports
 import sys
 import time
 
 from LiveDataSource import LiveDataSource
-from OScope import OScope
+from OScopeAnimated import OScope
+
 logger = logging.getLogger(__name__)
 
 
 def setup():
     parser = argparse.ArgumentParser(description="cli test for LiveDataSource")
-    parser.add_argument(
-        "-v", "--verbose", action="count", default=0, help="Increase verbosity of outut"
-    )
+    parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase verbosity of outut")
     parser.add_argument(
         "-w",
         "--window-size",
@@ -41,6 +43,8 @@ def setup():
 
     args = parser.parse_args()
 
+    mpl.pyplot.set_loglevel(level="warning")
+
     if args.verbose == 0:
         level = logging.WARNING
     elif args.verbose == 1:
@@ -63,30 +67,9 @@ def setup():
     return args
 
 
-try:
+if __name__ == "__main__":
     args = setup()
-    data = []
-    lds = LiveDataSource(args.source, args.verbose>2)
-    scope = OScope(args)
-
-    while not scope.time_to_die:
-        new_data = 0
-        try:
-            logger.debug(f"qsize:{lds.data.qsize()}")
-            while True:
-                data.append(lds.data.get(False))
-                new_data += 1
-        except queue.Empty:
-            pass
-        if new_data == 0:
-            time.sleep(0.05)
-            continue
-        scope.set_labels(lds.labels)
-        scope.makeFig(data)
-        # keep list from growing chewing up memory
-        if scope.imin > 200:
-            data = data[scope.imin :]
-            logger.info(f"imin:{scope.imin}")
-except KeyboardInterrupt:
-    pass
-lds.stop_rx()
+    lds = LiveDataSource(args.source, args.verbose > 2)
+    scope = OScope(lds, args.window_size)
+    scope.show()
+    lds.stop()

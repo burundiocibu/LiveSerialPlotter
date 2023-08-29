@@ -21,9 +21,7 @@ logger = logging.getLogger(__name__)
 # =============================================================================
 def main():
     parser = argparse.ArgumentParser(description="loranet bridge")
-    parser.add_argument(
-        "-v", "--verbose", action="count", default=0, help="Increase verbosity of outut"
-    )
+    parser.add_argument("-v", "--verbose", action="count", default=0, help="Increase verbosity of outut")
     parser.add_argument(
         "--max-points",
         default=10000,

@@ -62,9 +62,7 @@ class PlotterWindow:
         self.portlabel.grid(row=3, column=0, sticky="W")
 
         self.serialconnectedstringvar = StringVar(master, value="Unconnected")
-        self.serialconnectedlabel = Label(
-            master, textvar=self.serialconnectedstringvar, fg="red", width=15
-        )
+        self.serialconnectedlabel = Label(master, textvar=self.serialconnectedstringvar, fg="red", width=15)
         self.serialconnectedlabel.grid(row=1, column=3)
 
         self.numinputslabel = Label(master, text="# Inputs")
@@ -78,9 +76,7 @@ class PlotterWindow:
         self.currentval.grid(row=2, column=5)
 
         self.packageindicator = StringVar(master, value="!")
-        self.packageindicatorlabel = Label(
-            master, textvar=self.packageindicator, font=("times", 20, "bold")
-        )
+        self.packageindicatorlabel = Label(master, textvar=self.packageindicator, font=("times", 20, "bold"))
         self.packageindicatorlabel.grid(row=4, column=5)
         self.packageindicator.set(".")
 
@@ -102,9 +98,7 @@ class PlotterWindow:
         self.numinputsentrystr = StringVar(master, value="1")
 
         # Using OptionMenu instead:
-        self.plotmethodoptionmenu = OptionMenu(
-            master, self.plotmethodentrystr, *plotmethods
-        )
+        self.plotmethodoptionmenu = OptionMenu(master, self.plotmethodentrystr, *plotmethods)
         self.plotmethodoptionmenu.grid(row=4, column=2)
 
         self.npointsoptionmenu = OptionMenu(master, self.npointsentrystr, *npoints_list)
@@ -117,9 +111,7 @@ class PlotterWindow:
         self.portoptionmenu.width = 20
         self.portoptionmenu.grid(row=3, column=1, sticky="W")
 
-        self.numinputsoptionmenu = OptionMenu(
-            master, self.numinputsentrystr, *input_num_options
-        )
+        self.numinputsoptionmenu = OptionMenu(master, self.numinputsentrystr, *input_num_options)
         self.numinputsoptionmenu.grid(row=4, column=1, sticky="W")
 
         # Buttons

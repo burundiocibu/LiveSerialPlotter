@@ -5,9 +5,8 @@ some np arrays up-to-date and also provides some tk callbacks to configure it.
 
 It accepts data from either a serial port or from a udp socket.
 """
-from argparse import Namespace
-import datetime
 import logging
+import datetime
 import queue
 import serial
 import serial.tools.list_ports
@@ -31,7 +30,7 @@ class LiveDataSource:
         labels: a list of labels for each item in the list of observations
     """
 
-    def __init__(self, source: str = "test:100", log_rx = False):
+    def __init__(self, source: str = "test:100", log_rx=False):
         """Constructor for LiveDataSource
 
         Args:
@@ -55,9 +54,7 @@ class LiveDataSource:
         daemon_me = False
         if source.startswith("serial:"):
             port = source.removeprefix("serial:")
-            self.io_thread = threading.Thread(
-                target=self.serial_rx, args=(port, 115200)
-            )
+            self.io_thread = threading.Thread(target=self.serial_rx, args=(port, 115200))
             self.io_thread.setDaemon(daemon_me)
             self.io_thread.start()
             logger.debug(f"thread {self.io_thread.name} started")
@@ -71,14 +68,17 @@ class LiveDataSource:
             self.io_thread.setDaemon(daemon_me)
             self.io_thread.start()
             logger.debug(f"thread {self.io_thread.name} started")
-            self.tx_thread = threading.Thread(
-                target=self.udp_tx, args=(rate, addr, port)
-            )
+            self.tx_thread = threading.Thread(target=self.udp_tx, args=(rate, addr, port))
             self.tx_thread.setDaemon(daemon_me)
             self.tx_thread.start()
             logger.debug(f"thread {self.tx_thread.name} started")
 
-    def stop_rx(self):
+        logger.info("Waiting for label names...")
+        while len(self.labels) < 2:
+            time.sleep(0.05)
+        logger.info(f"Got them: {self.labels}")
+
+    def stop(self):
         """Stop io thread and tx thread if it is running"""
         logger.info("stopping io_thread...")
         self.time_to_die = True
@@ -91,6 +91,7 @@ class LiveDataSource:
 
     def parse_data(self, rawdata):
         """Parse  values and optionally labels out of rawdata and put them on the queue."""
+        values = [time.time()]
         values = [datetime.datetime.now()]
         new_labels = ["time"]
         rawdata = rawdata.decode("utf8").strip()
@@ -99,7 +100,7 @@ class LiveDataSource:
 
         if self.log_rx:
             logger.debug(f"rx:{rawdata}")
-        
+
         l = rawdata.rfind(">")
         if l == -1:
             logger.warning(f"no > delimiter: {rawdata}")
@@ -158,7 +159,7 @@ class LiveDataSource:
         sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
         i = 0
-        delay = 1.0/tx_rate
+        delay = 1.0 / tx_rate
         logger.info(f"sending test data to {addr}:{port} at {tx_rate} Hz ({1e3*delay:.0f}ms)")
         if delay <= 0.1:
             imax = int(1 / delay)
@@ -179,6 +180,14 @@ class LiveDataSource:
                 i = 0
             st = max(0.005, delay + err)
             t = self.t()
-            time.sleep(st-0.005)
+            time.sleep(st - 0.005)
 
         logger.info("udp_tx done")
+
+    def get_data(self):
+        """This function will be running on a seperate thread from the data sources."""
+        while not self.time_to_die:
+            new_data = []
+            while self.data.qsize() > 0:
+                new_data.append(self.data.get(False))
+            yield new_data
