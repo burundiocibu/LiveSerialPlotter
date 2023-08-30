@@ -4,15 +4,11 @@
 import argparse
 import logging
 import matplotlib as mpl
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
-import numpy as np
 import serial.tools.list_ports
 import sys
-import time
 
 from LiveDataSource import LiveDataSource
-from OScopeAnimated import OScope
+from OScope import OScope
 
 logger = logging.getLogger(__name__)
 
@@ -42,8 +38,6 @@ def setup():
     )
 
     args = parser.parse_args()
-
-    mpl.pyplot.set_loglevel(level="warning")
 
     if args.verbose == 0:
         level = logging.WARNING

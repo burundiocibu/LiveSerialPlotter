@@ -59,7 +59,11 @@ class LiveDataSource:
             self.io_thread.start()
             logger.debug(f"thread {self.io_thread.name} started")
         elif source.startswith("udp:"):
-            port = source.removeprefix("udp:")
+            port = int(source.removeprefix("udp:"))
+            addr = "192.168.86.102"
+            self.io_thread = threading.Thread(target=self.udp_rx, args=(addr, port))
+            self.io_thread.setDaemon(daemon_me)
+            self.io_thread.start()
         elif source.startswith("test:"):
             rate = float(source.removeprefix("test:"))
             addr = "127.0.0.1"
