@@ -96,7 +96,6 @@ class LiveDataSource:
     def parse_data(self, rawdata):
         """Parse  values and optionally labels out of rawdata and put them on the queue."""
         values = [time.time()]
-        values = [datetime.datetime.now()]
         new_labels = ["time"]
         rawdata = rawdata.decode("utf8").strip()
         if len(rawdata) == 0:

@@ -30,10 +30,9 @@ class OScope:
         ui_max_y = 0.95
 
         self.fig.subplots_adjust(top=ui_max_y, right=ui_start_x - 0.01, left=0.07, bottom=ui_start_y)
-        self.width = width
+        self.width = float(width)
         self.lds = lds
-        self.width = datetime.timedelta(seconds=float(width))
-        self.tdata = [datetime.datetime.now()]
+        self.tdata = [time.time()]
         self.ydata = {}  # label -> data
         self.lines = {}  # label -> line
         self.labels = lds.labels
@@ -45,13 +44,15 @@ class OScope:
             self.lines[label] = Line2D(self.tdata, self.ydata[label], color=colors[i])
             self.ax.add_line(self.lines[label])
             i += 1
-        self.ax.set_ylim(-0.1, 1)
-        self.ax.set_xlim(self.tdata[0], self.tdata[0] + self.width)
-        self.ax.tick_params(which="minor", width=0.75, length=2.5)
-        self.ax.xaxis.set_ticks_position("bottom")
-        self.ax.xaxis.set_major_formatter(mdates.DateFormatter("%M:%S"))
-        self.ax.xaxis.set_minor_locator(ticker.MultipleLocator(0.2))
-        self.ax.yaxis.set_minor_locator(ticker.MultipleLocator(5))
+        self.ax.set_ylim(0, 1)
+        self.ax.set_xlim(-self.width / 2, self.width / 2)
+
+        # self.ax.set_xlim(self.tdata[0], self.tdata[0] + self.width)
+        # self.ax.tick_params(which="minor", width=0.75, length=2.5)
+        # self.ax.xaxis.set_ticks_position("bottom")
+        # self.ax.xaxis.set_major_formatter(mdates.DateFormatter("%M:%S"))
+        # self.ax.xaxis.set_minor_locator(ticker.MultipleLocator(0.2))
+        # self.ax.yaxis.set_minor_locator(ticker.MultipleLocator(5))
 
         line_colors = [self.lines[label].get_color() for label in self.labels[1:]]
         leg_h = (len(self.labels) - 1) * 0.04
@@ -105,7 +106,7 @@ class OScope:
             lastt = self.tdata[-1]
             # reset the arrays
             if lastt >= self.tdata[0] + self.width:
-                if self.mode == 0:
+                if self.mode == 0:  # auto
                     self.tdata = [self.tdata[-1]]
                     for label in self.labels[1:]:
                         self.ydata[label] = [self.ydata[label][-1]]
@@ -116,7 +117,6 @@ class OScope:
                     self.tdata = self.tdata[imin:]
                     for label in self.labels[1:]:
                         self.ydata[label] = self.ydata[label][imin:]
-                self.ax.set_xlim(self.tdata[0], self.tdata[0] + self.width)
                 self.ax.figure.canvas.draw()
 
             ymin, ymax = self.ax.get_ylim()
@@ -129,8 +129,10 @@ class OScope:
                     ymax = max(y, ymax)
                     ymin = min(y, ymin)
 
+            t0 = self.tdata[0] + self.width / 2
+            tdata = np.array(self.tdata) - t0
             for label in self.labels[1:]:
-                self.lines[label].set_data(self.tdata, self.ydata[label])
+                self.lines[label].set_data(tdata, self.ydata[label])
             self.ax.set_ylim(ymin, ymax)
 
         return self.lines.values()
